@@ -21,9 +21,9 @@ import formFourteenRoutes from "./routes/formFourteenRoutes.js";
 import formFifteenRoutes from "./routes/formFifteenRoutes.js";
 import formSixteenRoutes from "./routes/formSixteenRoutes.js";
 import formSeventeenRoutes from "./routes/formSeventeenRoutes.js";
-import formEighteenRoutes from "./routes/formEighteenRoutes.js"; // Assuming this exists
-import formNineteenRoutes from "./routes/formNineteenRoutes.js"; // Assuming this exists
-import formTwentyRoutes from "./routes/formTwentyRoutes.js"; // Assuming this exists
+import formEighteenRoutes from "./routes/formEighteenRoutes.js";
+import formNineteenRoutes from "./routes/formNineteenRoutes.js";
+import formTwentyRoutes from "./routes/formTwentyRoutes.js";
 import formTwentyOneRoutes from "./routes/formTwentyOneRoutes.js";
 import formTwentyTwoRoutes from "./routes/formTwentyTwoRoutes.js";
 import formTwentyThreeRoutes from "./routes/formTwentyThreeRoutes.js";
@@ -31,35 +31,30 @@ import formTwentyFourRoutes from "./routes/formTwentyFourRoutes.js";
 import formTwentyFiveRoutes from "./routes/formTwentyFiveRoutes.js";
 import formTwentySixRoutes from "./routes/formTwentySixRoutes.js";
 
-
-
-
-
-
-
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import multer from "multer"; // Added since you're using Multer in error handling
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(cookieParser()); // Parse cookies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // CORS configuration
 app.use(
   cors({
-    origin: "http://localhost:5173", // Frontend URL
-    credentials: true, // Allow cookies and credentials
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Use env variable for deployed frontend
+    credentials: true,
   })
 );
 
-// Serve static files from the "uploads" folder
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// Serve static files from the "uploads" folder (one level up from backend)
+app.use("/uploads", express.static(path.join(process.cwd(), "../uploads")));
 
 // Connect to MongoDB
 connectToDatabase();
@@ -85,21 +80,15 @@ app.use("/api/assessments/form-fourteen", formFourteenRoutes);
 app.use("/api/assessments/form-fifteen", formFifteenRoutes);
 app.use("/api/assessments/form-sixteen", formSixteenRoutes);
 app.use("/api/assessments/form-seventeen", formSeventeenRoutes);
-app.use("/api/assessments/form-eighteen", formEighteenRoutes); // Add if exists
-app.use("/api/assessments/form-nineteen", formNineteenRoutes); // Add if exists
-app.use("/api/assessments/form-twenty", formTwentyRoutes); // Add if exists
+app.use("/api/assessments/form-eighteen", formEighteenRoutes);
+app.use("/api/assessments/form-nineteen", formNineteenRoutes);
+app.use("/api/assessments/form-twenty", formTwentyRoutes);
 app.use("/api/assessments/form-twenty-one", formTwentyOneRoutes);
 app.use("/api/assessments/form-twenty-two", formTwentyTwoRoutes);
 app.use("/api/assessments/form-twenty-three", formTwentyThreeRoutes);
 app.use("/api/assessments/form-twenty-four", formTwentyFourRoutes);
 app.use("/api/assessments/form-twenty-five", formTwentyFiveRoutes);
 app.use("/api/assessments/form-twenty-six", formTwentySixRoutes);
-
-
-
-
-
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -114,5 +103,4 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-});  
-
+});
